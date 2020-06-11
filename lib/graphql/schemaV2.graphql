@@ -1,5 +1,5 @@
 # source: http://localhost:3060/graphql/v2
-# timestamp: Wed Jun 10 2020 15:28:25 GMT+0100 (British Summer Time)
+# timestamp: Thu Jun 11 2020 18:40:12 GMT+0200 (GMT+02:00)
 
 """
 Account interface shared by all kind of accounts (Bot, Collective, Event, User, Organization)
@@ -605,7 +605,16 @@ type Comment {
   markdown: String
   fromAccount: Account
   account: Account
+
+  """
+  Returns a map of reactions counts for this comment
+  """
   reactions: JSONObject
+
+  """
+  Returns the list of reactions added to this comment by logged in user
+  """
+  userReactions: [String]
   fromCollective: Account @deprecated(reason: "2020-02-25: Please use fromAccount")
   collective: Account @deprecated(reason: "2020-02-25: Please use account")
 }
@@ -3240,13 +3249,8 @@ type Mutation {
     A unique identifier for the comment id associated with this comment reaction
     """
     comment: CommentReferenceInput!
-
-    """
-    A unique identifier for the account associated with this reaction
-    """
-    fromAccount: AccountReferenceInput!
   ): Comment!
-  removeCommentReaction(id: String!): Comment!
+  removeCommentReaction(comment: CommentReferenceInput!, emoji: String!): Comment!
 
   """
   Connect external account to Open Collective Account
