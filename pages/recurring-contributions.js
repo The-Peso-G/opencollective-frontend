@@ -4,10 +4,13 @@ import { graphql } from '@apollo/react-hoc';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import styled from 'styled-components';
 
+import { CollectiveType } from '../lib/constants/collectives';
 import { generateNotFoundError } from '../lib/errors';
 import { API_V2_CONTEXT, gqlV2 } from '../lib/graphql/helpers';
 
 import AuthenticatedPage from '../components/AuthenticatedPage';
+import { Sections } from '../components/collective-page/_constants';
+import CollectiveNavbar from '../components/CollectiveNavbar';
 import Container from '../components/Container';
 import ErrorPage from '../components/ErrorPage';
 import { Flex } from '../components/Grid';
@@ -166,16 +169,36 @@ class recurringContributionsPage extends React.Component {
                 {notificationType === 'error' && <P>{notificationText}</P>}
               </TemporaryNotification>
             )}
-            <Container py={[5, 6]} px={[3, 4]}>
-              <H2 my={2} fontWeight="300">
-                <FormattedMessage
-                  id="Subscriptions.Title"
-                  defaultMessage="{collectiveName}'s recurring financial contributions"
-                  values={{
-                    collectiveName: collective.name,
+
+            <Container mb={4}>
+              {console.log(collective)}
+              {1 !== 1 && (
+                <CollectiveNavbar
+                  collective={collective}
+                  isAdmin={LoggedInUser && LoggedInUser.canEditCollective(collective)}
+                  showEdit
+                  selectedSection={
+                    collective.type === CollectiveType.COLLECTIVE ? Sections.BUDGET : Sections.TRANSACTIONS
+                  }
+                  callsToAction={{
+                    hasSubmitExpense: [CollectiveType.COLLECTIVE, CollectiveType.EVENT].includes(collective.type),
                   }}
                 />
-              </H2>
+              )}
+            </Container>
+
+            <Container py={[5, 6]} px={[3, 4]}>
+              {2 !== 1 && (
+                <H2 my={2} fontWeight="300">
+                  <FormattedMessage
+                    id="Subscriptions.Title"
+                    defaultMessage="{collectiveName}'s recurring financial contributions"
+                    values={{
+                      collectiveName: collective.name,
+                    }}
+                  />
+                </H2>
+              )}
               <Flex my={3} flexWrap="wrap">
                 <FilterTag
                   type={this.state.filter === 'active' ? 'dark' : null}
